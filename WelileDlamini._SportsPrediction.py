@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[7]:
+# In[200]:
 
 
 import pandas as pd
 import numpy as np
 
 
-# In[8]:
+# In[201]:
 
 
 male = pd.read_csv("male_players (legacy).csv", low_memory = False) # specific values for the null values, Data Munging
@@ -19,7 +19,7 @@ male
 # 
 # Demonstrate the data preparation & feature extraction process
 
-# In[9]:
+# In[202]:
 
 
 L = []
@@ -31,19 +31,19 @@ for i in male.columns:
         L_less.append(i)
 
 
-# In[10]:
+# In[203]:
 
 
 male= male[L]
 
 
-# In[11]:
+# In[204]:
 
 
 male
 
 
-# In[12]:
+# In[205]:
 
 
 male.columns
@@ -51,7 +51,7 @@ male.columns
 
 # Selecting the relavant features
 
-# In[13]:
+# In[206]:
 
 
 # Separate numeric columns
@@ -71,7 +71,7 @@ print(non_numeric_data.columns)
 
 # Imputing
 
-# In[14]:
+# In[207]:
 
 
 from sklearn.impute import SimpleImputer
@@ -91,36 +91,36 @@ non_numeric_data.isnull().sum()
 
 # Encoding
 
-# In[15]:
+# In[208]:
 
 
 print(non_numeric_data.columns)
 
 
-# In[16]:
+# In[209]:
 
 
 # Identify high cardinality columns
-high_cardinality_threshold = 43  # You can adjust this threshold based on your needs
+high_cardinality_threshold = 43 
 high_cardinality_columns = [col for col in non_numeric_data.columns if non_numeric_data[col].nunique() > high_cardinality_threshold]
 
 # Print high cardinality columns
 print("High Cardinality Columns:", high_cardinality_columns)
 
 
-# In[17]:
+# In[210]:
 
 
 from sklearn.preprocessing import LabelEncoder
 
-# Apply label encoding to high cardinality columns
+# label encoding to high cardinality columns
 label_encoders = {}
 for col in high_cardinality_columns:
     le = LabelEncoder()
     non_numeric_data[col] = le.fit_transform(non_numeric_data[col])
     label_encoders[col] = le
 
-# Perform one-hot encoding on remaining categorical columns
+#  one-hot encoding on remaining categorical columns
 remaining_categorical_columns = [col for col in non_numeric_data.columns if col not in high_cardinality_columns]
 non_numeric_data_encoded = pd.get_dummies(non_numeric_data, columns=remaining_categorical_columns)
 
@@ -130,7 +130,7 @@ print(non_numeric_data_encoded)
 
 # Scaling
 
-# In[18]:
+# In[211]:
 
 
 from sklearn.preprocessing import StandardScaler
@@ -145,7 +145,7 @@ features_scaled = scaler.fit_transform(features)
 
 # features
 
-# In[19]:
+# In[212]:
 
 
 features.iloc[:,1]
@@ -153,7 +153,7 @@ features.iloc[:,1]
 
 # Merging
 
-# In[20]:
+# In[213]:
 
 
 import pandas as pd
@@ -176,15 +176,15 @@ print(data_final)
 # 
 # Create feature subsets that show maximum correlation with the dependent variable.
 
-# In[21]:
+# In[214]:
 
 
 # Calculate correlations with the dependent variable 'overall'
 correlation_matrix = data_final.corr()
 correlation_with_target = correlation_matrix['overall'].abs().sort_values(ascending=False)
 
-# Select features with highest correlation to 'overall'
-top_features = correlation_with_target.index[1:11]  # top 10 features excluding 'overall'
+#features with highest correlation to 'overall'
+top_features = correlation_with_target.index[1:11]  
 
 # Create feature subset
 feature_subset = data_final[top_features]
@@ -211,7 +211,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 
 
 # Select features with highest correlation to 'overall'
-top_features = correlation_with_target.index[1:11]  # top 10 features excluding 'overall'
+top_features = correlation_with_target.index[1:11]  
 
 # Create feature subset
 X = data_final[top_features]
@@ -318,20 +318,20 @@ for name, model in best_models.items():
 # 
 # Use the data from another season(players_22) which was not used during the training to test how good is the model.
 
-# In[124]:
+# In[163]:
 
 
 players = pd.read_csv("players_22-1.csv", low_memory = False) # specific values for the null values, Data Munging
 players
 
 
-# In[125]:
+# In[164]:
 
 
 players.head()
 
 
-# In[126]:
+# In[165]:
 
 
 top_features = ['movement_reactions', 'potential', 'passing', 'rcm', 'cm', 'lcm',
@@ -339,20 +339,20 @@ top_features = ['movement_reactions', 'potential', 'passing', 'rcm', 'cm', 'lcm'
 top_features
 
 
-# In[127]:
+# In[166]:
 
 
 X_new = players[top_features]
 
 
-# In[130]:
+# In[167]:
 
 
 # Load the trained model
 #model = joblib.load('trained_model.pkl')  
 
 
-# In[151]:
+# In[199]:
 
 
 import pandas as pd
@@ -371,7 +371,7 @@ players_22[object_cols] = players_22[object_cols].astype('category')
 
 # Save the best trained model to a pickle file
 with open('trained_model.pkl', 'wb') as file:
-    pickle.dump(best_xgb, file)
+    pickle.dump(best_xgb, file)S
 
 # Load the pre-trained XGBoost model from the correct pickle file
 with open("trained_model.pkl", 'rb') as file:
@@ -388,12 +388,12 @@ top_features = ['movement_reactions', 'potential', 'passing', 'rcm', 'cm', 'lcm'
 # Select the relevant features
 X_new = players_22[top_features]
 
-# Define the pipeline to automate the process
+#  the pipeline to automate the process
 pipeline = Pipeline([
     ('model', model)
 ])
 
-# Let's create some dummy true labels
+
 true_labels = pd.Series([1 if i % 2 == 0 else 0 for i in range(len(X_new))])
 
 # Make predictions
